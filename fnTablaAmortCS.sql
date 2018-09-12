@@ -51,7 +51,7 @@ begin
 
 	drop table if exists tbAmortizacion;
 	
-	return jsonSalida;
+	return concat('{tablaAmort: ', jsonSalida, '}');
 end;
 $BODY$
   LANGUAGE plpgsql VOLATILE
