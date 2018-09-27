@@ -57,7 +57,14 @@ create table if not exists tbUsuPassw(fiIdUsuPassw serial primary key,
                                 fcUsuPassw varchar(200) not null default 'cXdlcnR5',
                                 fnStatUsuPassw boolean default true,
                                 fdFecIniUsuPassw timestamp default CURRENT_TIMESTAMP,
-                                fdFecFinUsuPassw timestamp null);                                
+                                fdFecFinUsuPassw timestamp null);
+
+create table if not exists tbPlazos(fiIdPlazo serial primary key,				
+                                fcNomPlazo varchar(200) not null,
+                                fiNoDiasPlazo int,
+                                fnStatPlazo boolean default true,
+                                fdFecIniPlazo timestamp default CURRENT_TIMESTAMP,
+                                fdFecFinPlazo timestamp null);
 
 insert into tbCatObj(fcObj, fcDescObj) values ('tb', 'tabla');
 insert into tbCatObj(fcObj, fcDescObj) values ('sp', 'store procedure');        
@@ -90,6 +97,8 @@ insert into tbCatCampo(fcCampo, fcDescCampo) values('Dir', 'Direccion');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Corr', 'Correo');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Elec', 'Electronico');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Obj', 'Objeto');
+insert into tbCatCampo(fcCampo, fcDescCampo) values('No', 'Numero');
+insert into tbCatCampo(fcCampo, fcDescCampo) values('Nom', 'Nombre');
 
 insert into tbCatTpPer(fcDescTpPer) values ('Fisica');
 insert into tbCatTpPer(fcDescTpPer) values ('Moral');
@@ -110,6 +119,10 @@ insert into tbUsuCveApi(fiIdUsu, fcCveAPI) values(1,'1234');
 
 insert into tbUsuPassw(fiIdUsu) values (1);
 
+insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Semanal, 7);
+insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Quincenal, 15);
+insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Mensual, 30);
+insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Anual, 360);
 
 select *
 from tbUsuPassw;
