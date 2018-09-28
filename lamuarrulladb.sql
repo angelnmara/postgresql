@@ -14,8 +14,9 @@ drop table if exists tbMemberRol;
 
 drop table if exists tbCatRol;
 
+drop table if exists tbPlazo;
 
-
+drop table if exists tbTA;
 
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
@@ -59,12 +60,18 @@ create table if not exists tbUsuPassw(fiIdUsuPassw serial primary key,
                                 fdFecIniUsuPassw timestamp default CURRENT_TIMESTAMP,
                                 fdFecFinUsuPassw timestamp null);
 
-create table if not exists tbPlazos(fiIdPlazo serial primary key,				
+create table if not exists tbPlazo(fiIdPlazo serial primary key,				
                                 fcNomPlazo varchar(200) not null,
                                 fiNoDiasPlazo int,
                                 fnStatPlazo boolean default true,
                                 fdFecIniPlazo timestamp default CURRENT_TIMESTAMP,
                                 fdFecFinPlazo timestamp null);
+
+create table if not exists tbTA(fiNumPagoTA int, 
+		fdPagoTA decimal(18,2),
+		fdInteresesPagadosTA decimal(18,2),
+		fdCapitalPagadoTA decimal(18,2),
+		fdMontoPrestamoTA decimal(18,2))                                ;
 
 insert into tbCatObj(fcObj, fcDescObj) values ('tb', 'tabla');
 insert into tbCatObj(fcObj, fcDescObj) values ('sp', 'store procedure');        
@@ -119,10 +126,13 @@ insert into tbUsuCveApi(fiIdUsu, fcCveAPI) values(1,'1234');
 
 insert into tbUsuPassw(fiIdUsu) values (1);
 
-insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Semanal, 7);
-insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Quincenal, 15);
-insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Mensual, 30);
-insert into tbPlazos(fcNomPlazo, fiNoDiasPlazo)values(Anual, 360);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Semanal', 7);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Quincenal', 15);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Mensual', 30);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Anual', 360);
 
 select *
 from tbUsuPassw;
+
+select *
+from tbPlazo;
