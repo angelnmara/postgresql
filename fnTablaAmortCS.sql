@@ -30,6 +30,7 @@ begin
 		when 3 then tasa
 		when 2 then (tasa * (((360/7)/12)/2))
 		when 1 then (tasa * ((360/7)/12))
+		else tasa
 	end;
 	
 	montoPago = (tasaMensual / (1 - ((1+tasaMensual)^(-1*plazo)))) * montoTotal;
