@@ -8,4 +8,4 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
-select fnAPI('tbusu');
+select fnAPI('tbPlazo');

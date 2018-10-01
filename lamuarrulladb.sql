@@ -16,7 +16,9 @@ drop table if exists tbCatRol;
 
 drop table if exists tbPlazo;
 
-drop table if exists tbTA;
+drop table if exists tbAmortiza;
+
+drop table if exists tbUsuTabla;
 
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
@@ -67,11 +69,15 @@ create table if not exists tbPlazo(fiIdPlazo serial primary key,
                                 fdFecIniPlazo timestamp default CURRENT_TIMESTAMP,
                                 fdFecFinPlazo timestamp null);
 
-create table if not exists tbTA(fiNumPagoTA int, 
-		fdPagoTA decimal(18,2),
-		fdInteresesPagadosTA decimal(18,2),
-		fdCapitalPagadoTA decimal(18,2),
-		fdMontoPrestamoTA decimal(18,2))                                ;
+create table if not exists tbUsuTabla(fiIdUsuTabla serial primary key,
+	fiIdUsu int);                                
+
+create table if not exists tbAmortiza(fiNumPagoAmortiza int,
+		fiIdUsuTabla int references tbUsuTabla(fiIdUsuTabla),
+		fdPagoAmortiza decimal(18,2),
+		fdInteresesPagadosAmortiza decimal(18,2),
+		fdCapitalPagadoAmortiza decimal(18,2),
+		fdMontoPrestamoAmortiza decimal(18,2));
 
 insert into tbCatObj(fcObj, fcDescObj) values ('tb', 'tabla');
 insert into tbCatObj(fcObj, fcDescObj) values ('sp', 'store procedure');        
@@ -106,6 +112,7 @@ insert into tbCatCampo(fcCampo, fcDescCampo) values('Elec', 'Electronico');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Obj', 'Objeto');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('No', 'Numero');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Nom', 'Nombre');
+insert into tbCatCampo(fcCampo, fcDescCampo) values('Cte', 'Cliente');
 
 insert into tbCatTpPer(fcDescTpPer) values ('Fisica');
 insert into tbCatTpPer(fcDescTpPer) values ('Moral');
@@ -136,3 +143,9 @@ from tbUsuPassw;
 
 select *
 from tbPlazo;
+
+select *
+from tbUsuTabla;
+
+select *
+from tbAmortiza;

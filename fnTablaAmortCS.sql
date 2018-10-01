@@ -5,12 +5,14 @@
 CREATE OR REPLACE FUNCTION public.fntablaamortcs(
     numeric,
     numeric,
+    integer, 
     integer)
   RETURNS character varying AS
 $BODY$
 declare montoTotal alias for $1;
-	tasaAnual alias for $2;
+	tasa alias for $2;
 	plazo alias for $3;
+	tipoTasa alias for $4;	
 	tasaMensual decimal;
 	montoPago decimal;
 	saldoInsoluto decimal;
@@ -19,39 +21,45 @@ declare montoTotal alias for $1;
 	ta TablaAmort%ROWTYPE;	
 	count int := 1;
 	jsonSalida varchar;
+	secuencia int;
 begin	
-	tasaAnual = (tasaAnual/100);
-	tasaMensual = (tasaAnual/12);
+	tasa = (tasa/100);
+	tasaMensual :=
+	case tipoTasa 
+		when 4 then  (tasa/12)
+		when 3 then tasa
+		when 2 then (tasa * (((360/7)/12)/2))
+		when 1 then (tasa * ((360/7)/12))
+	end;
+	
 	montoPago = (tasaMensual / (1 - ((1+tasaMensual)^(-1*plazo)))) * montoTotal;
 
-	CREATE TEMP TABLE IF NOT EXISTS tbAmortizacion AS
-        select 0 count,0 montoPago,0 intereses,0 pagoCapital,montoTotal saldoInsoluto;
-
-	--select 0,0,0,0,montoTotal into ta;
-
+	insert into tbUsuTabla(fiIdUsu)values(1);
+	SELECT into secuencia currval(pg_get_serial_sequence('tbUsuTabla','fiidusutabla'));
+	
 	while plazo>=count loop
 		if count = 1 then		
 			saldoInsoluto =	montoTotal;
 		end if;
 		intereses = tasaMensual * saldoInsoluto;
 		pagoCapital = montoPago - intereses;
-		saldoInsoluto = saldoInsoluto - pagoCapital;
+		saldoInsoluto = saldoInsoluto - pagoCapital;	
 
-		insert into tbAmortizacion --(count,montoPago,intereses,pagoCapital,saldoInsoluto) 
-		values (count,montoPago,intereses,pagoCapital,saldoInsoluto);
-		--select count,montoPago,intereses,pagoCapital,saldoInsoluto into ta;
+		insert into tbAmortiza
+		values (count,secuencia,montoPago,intereses,pagoCapital,saldoInsoluto);
+		
 		count:=count+1;
 
 		raise notice 'Value: %', montoPago || ' ' || intereses;
 		
 	end loop;
 	
-	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortizacion) t;
-	--select ta;
-
-	drop table if exists tbAmortizacion;
+	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortiza) t;	
 	
-	return concat('{tablaAmort: ', jsonSalida, '}');
+	return concat('{tbAmortiza: ', jsonSalida, '}');
+
+	--- by d@ve_®
+	
 end;
 $BODY$
   LANGUAGE plpgsql VOLATILE
@@ -59,4 +67,4 @@ $BODY$
 ALTER FUNCTION public.fntablaamortcs(numeric, numeric, integer)
   OWNER TO postgres;
 
-select * from fntablaamortcs(20000, 10, 24);
+select * from public.fntablaamortcs(1200, 2,50,1);
