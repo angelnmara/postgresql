@@ -30,10 +30,14 @@ begin
 		when 3 then tasa
 		when 2 then (tasa * (((360/7)/12)/2))
 		when 1 then (tasa * ((360/7)/12))
-		else tasa
+		--else tasa
 	end;
+
+	raise notice 'Value: %', tasaMensual;
 	
 	montoPago = (tasaMensual / (1 - ((1+tasaMensual)^(-1*plazo)))) * montoTotal;
+
+	raise notice 'Value: %', montoPago;
 
 	insert into tbUsuTabla(fiIdUsu)values(1);
 	SELECT into secuencia currval(pg_get_serial_sequence('tbUsuTabla','fiidusutabla'));
@@ -55,7 +59,7 @@ begin
 		
 	end loop;
 	
-	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortiza) t;	
+	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortiza where fiIdUsuTabla = secuencia) t;	
 	
 	return concat('{tbAmortiza: ', jsonSalida, '}');
 
@@ -64,8 +68,11 @@ begin
 end;
 $BODY$
   LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public.fntablaamortcs(numeric, numeric, integer)
-  OWNER TO postgres;
+  --COST 100;
 
-select * from public.fntablaamortcs(1200, 2,50,1);
+--ALTER FUNCTION public.fntablaamortcs(numeric, numeric, integer, integer)
+  --OWNER TO postgres;
+
+--select * from public.fntablaamortcs(1200, 2,50,1);
+
+--select * from fntablaamortcs(225000, 10, 12, 1);
