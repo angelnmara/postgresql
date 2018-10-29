@@ -70,7 +70,7 @@ create table if not exists tbPlazo(fiIdPlazo serial primary key,
                                 fdFecFinPlazo timestamp null);
 
 create table if not exists tbUsuTabla(fiIdUsuTabla serial primary key,
-	fiIdUsu int);                                
+	fiIdUsu int references tbusu(fiidusu));                                
 
 create table if not exists tbAmortiza(fiNumPagoAmortiza int,
 		fiIdUsuTabla int references tbUsuTabla(fiIdUsuTabla),
