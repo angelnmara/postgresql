@@ -8,17 +8,29 @@ drop table if exists tbUsuCveApi;
 
 drop table if exists tbUsuPassw;
 
+drop table if exists tbAmortiza;
+
+drop table if exists tbUsuTabla;
+
 drop table if exists tbUsu;
 
 drop table if exists tbMemberRol;
 
 drop table if exists tbCatRol;
 
+drop table if exists tbTpGastoMes;
+
+drop table if exists tbPlazoTpGasto;
+
 drop table if exists tbPlazo;
 
-drop table if exists tbAmortiza;
+drop table if exists tbTpGasto;
 
-drop table if exists tbUsuTabla;
+drop table if exists tbGastadoMes;
+
+drop table if exists tbPresupuestoMes;
+
+drop table if exists tbMes;
 
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
@@ -72,12 +84,75 @@ create table if not exists tbPlazo(fiIdPlazo serial primary key,
 create table if not exists tbUsuTabla(fiIdUsuTabla serial primary key,
 	fiIdUsu int references tbusu(fiidusu));                                
 
-create table if not exists tbAmortiza(fiNumPagoAmortiza int,
+create table if not exists tbAmortiza(fiNumPagoAmortiza serial primary key,
 		fiIdUsuTabla int references tbUsuTabla(fiIdUsuTabla),
 		fdPagoAmortiza decimal(18,2),
 		fdInteresesPagadosAmortiza decimal(18,2),
 		fdCapitalPagadoAmortiza decimal(18,2),
 		fdMontoPrestamoAmortiza decimal(18,2));
+
+create table if not exists tbTpGasto(fiIdTipoGasto serial primary key,
+				fcDescTipoGasto varchar(500));
+
+create table if not exists tbPlazoTpGasto(fiIdPlazoTipoGasto serial primary key,
+					fiIdPlazo int references tbPlazo(fiIdPlazo),
+					fiIdTipoGasto int references tbTpGasto(fiIdTipoGasto),
+					fmMontoPlazoTipoGasto money not null);
+
+create table if not exists tbMes(fiIdMes serial primary key,
+				fcMes varchar(20));
+
+create table if not exists tbTpGastoMes(fiIdTipoGastoMes serial primary key,
+					fiIdMes int references tbMes(fiIdMes),
+					fiIdPlazoTipoGasto int references tbPlazoTpGasto(fiIdPlazoTipoGasto));				
+
+create table if not exists tbPresupuestoMes(fiIdPresupuestoMes serial primary key,
+					fiIdMes int references tbMes(fiIdMes),
+					fmPresupuestoMes money);
+
+create table if not exists tbGastadoMes(fiGastadoMes serial primary key,
+					fiIdMes int references tbMes(fiIdMes),
+					fmGastadoMes money);
+
+insert into tbMes(fcMes)values('Enero');
+insert into tbMes(fcMes)values('Febrero');
+insert into tbMes(fcMes)values('Marzo');
+insert into tbMes(fcMes)values('Abril');
+insert into tbMes(fcMes)values('Mayo');
+insert into tbMes(fcMes)values('Junio');
+insert into tbMes(fcMes)values('Julio');
+insert into tbMes(fcMes)values('Agosto');
+insert into tbMes(fcMes)values('Septiembre');
+insert into tbMes(fcMes)values('Octubre');
+insert into tbMes(fcMes)values('Noviembre');
+insert into tbMes(fcMes)values('Diciembre');
+
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Semanal', 7);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Quincenal', 15);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Mensual', 30);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Anual', 360);
+insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Bimestral', 60);								
+
+insert into tbTpGasto(fcDescTipoGasto) values ('Despensa');
+insert into tbTpGasto(fcDescTipoGasto) values ('Colegiaturas');
+insert into tbTpGasto(fcDescTipoGasto) values ('Gasto');
+insert into tbTpGasto(fcDescTipoGasto) values ('Diversión');
+insert into tbTpGasto(fcDescTipoGasto) values ('Cable, Télefono e Internet');						
+insert into tbTpGasto(fcDescTipoGasto) values ('Cable');
+insert into tbTpGasto(fcDescTipoGasto) values ('Teléfono');
+insert into tbTpGasto(fcDescTipoGasto) values ('Internet');
+insert into tbTpGasto(fcDescTipoGasto) values ('Gas');
+insert into tbTpGasto(fcDescTipoGasto) values ('Luz');
+insert into tbTpGasto(fcDescTipoGasto) values ('Agua');
+
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(3,1, 1400); 
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(2,2, 2600);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(1,3, 1400);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(2,4, 800);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(3,5, 850);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(3,9, 200);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(5,10, 300);
+insert into tbPlazoTpGasto(fiIdPlazo, fiIdTipoGasto, fmMontoPlazoTipoGasto) values(4,11, 800);
 
 insert into tbCatObj(fcObj, fcDescObj) values ('tb', 'tabla');
 insert into tbCatObj(fcObj, fcDescObj) values ('sp', 'store procedure');        
@@ -89,6 +164,7 @@ insert into tbCatCampo(fcCampo, fcDescCampo) values('fi', 'formato entero');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fc', 'formato caracter');                                    
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fn', 'formato boolean');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fd', 'formato fecha');
+insert into tbCatCampo(fcCampo, fcDescCampo) values('fm', 'formato money');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Desc', 'Descripcion campo');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Id', 'Campo Identificador');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Stat', 'Status del campo');
@@ -133,10 +209,7 @@ insert into tbUsuCveApi(fiIdUsu, fcCveAPI) values(1,'1234');
 
 insert into tbUsuPassw(fiIdUsu) values (1);
 
-insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Semanal', 7);
-insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Quincenal', 15);
-insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Mensual', 30);
-insert into tbPlazo(fcNomPlazo, fiNoDiasPlazo)values('Anual', 360);
+
 
 select *
 from tbUsuPassw;
