@@ -59,7 +59,11 @@ begin
 		
 	end loop;
 	
+<<<<<<< HEAD
 	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortiza where fiIdUsuTabla = secuencia) t;	
+=======
+	select array_to_json(array_agg(row_to_json(t))) into jsonSalida from (select * from tbAmortiza where fiIdUsutabla = secuencia) t;	
+>>>>>>> 1eb19dcdacc15bbdfee29d6a5eb75a0bd4d77cc6
 	
 	return concat('{tbAmortiza: ', jsonSalida, '}');
 
