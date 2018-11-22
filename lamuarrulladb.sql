@@ -38,11 +38,16 @@ drop table if exists tbTipoPantalla;
 
 drop table if exists tbRols;
 
+drop table if exists tbTrabajosGruposTareas;
+
+drop table if exists tbTrabajos;
+
 drop table if exists tbGruposTareas;
 
 drop table if exists tbGrupos;
 
 drop table if exists tbTareas;
+
 
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
@@ -98,10 +103,10 @@ create table if not exists tbUsuTabla(fiIdUsuTabla serial primary key,
 
 create table if not exists tbAmortiza(fiNumPagoAmortiza serial primary key,
 		fiIdUsuTabla int references tbUsuTabla(fiIdUsuTabla),
-		fdPagoAmortiza decimal(18,2),
-		fdInteresesPagadosAmortiza decimal(18,2),
-		fdCapitalPagadoAmortiza decimal(18,2),
-		fdMontoPrestamoAmortiza decimal(18,2));
+		flPagoAmortiza decimal(18,2),
+		flInteresesPagadosAmortiza decimal(18,2),
+		flCapitalPagadoAmortiza decimal(18,2),
+		flMontoPrestamoAmortiza decimal(18,2));
 
 create table if not exists tbTpGasto(fiIdTipoGasto serial primary key,
 				fcDescTipoGasto varchar(500));
@@ -144,9 +149,42 @@ create table if not exists tbGrupos(fiIdGrupo serial primary key,
 create table if not exists tbTareas(fiIdTarea serial primary key,
 				fcTareaDesc varchar(1000));
 
-create table if not exists tbGruposTareas(fiIDGrupoTarea serial primary key,
+create table if not exists tbGruposTareas(fiIdGrupoTarea serial primary key,
 					fiIdGrupo int references tbGrupos(fiIdGrupo),
-					fiIdTarea int references tbTareas(fiIdTarea));			
+					fiIdTarea int references tbTareas(fiIdTarea));		
+
+create table if not exists tbTrabajos(fiIdTrabajo serial primary key,
+				fcTrabajoDesc varchar(1000),
+				fcTrabajoDireccion varchar(1000),
+				fcTrabajoLote varchar(1000),
+				fcTrabajoCP varchar(10),
+				fcTrabajoReferencia varchar(5000),
+				flTrabajoLat decimal(28,10),
+				flTrabajoLong decimal(28,10),
+				fdTrabajoFecUltCambio date default CURRENT_TIMESTAMP,
+				fnTrabajoStat bool default true);
+
+create table if not exists tbTrabajosGruposTareas(fiIdTrabajosGruposTareas serial primary key,
+						fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
+						fiIdGrupoTarea int references tbGruposTareas(fiIdGrupoTarea));
+
+insert into tbTrabajos(fcTrabajoDesc, 
+		fcTrabajoDireccion, 
+		fcTrabajoLote, 
+		fcTrabajoCP,
+		fcTrabajoReferencia, 
+		flTrabajoLat, 
+		flTrabajoLong)
+		values('Primer trabajo',
+		'Sierra dorada 29',
+		'lt 39',
+		'55790',
+		'Porton sin pintar',
+		106.52658,
+		-21.36979);
+
+insert into tbTrabajosGruposTareas(fiIdTrabajo, fiIdGrupoTarea)values(1,1);
+insert into tbTrabajosGruposTareas(fiIdTrabajo, fiIdGrupoTarea)values(1,2);
 
 insert into tbTareas(fcTareaDesc)values('Pintar puerta');
 insert into tbTareas(fcTareaDesc)values('Pintura externa');
@@ -220,6 +258,7 @@ insert into tbCatCampo(fcCampo, fcDescCampo) values('fc', 'formato caracter');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fn', 'formato boolean');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fd', 'formato fecha');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('fm', 'formato money');
+insert into tbCatCampo(fcCampo, fcDescCampo) values('fl', 'formato decimal');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Desc', 'Descripcion campo');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Id', 'Campo Identificador');
 insert into tbCatCampo(fcCampo, fcDescCampo) values('Stat', 'Status del campo');
