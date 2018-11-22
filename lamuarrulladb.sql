@@ -16,8 +16,6 @@ drop table if exists tbUsu;
 
 drop table if exists tbMemberRol;
 
-drop table if exists tbCatRol;
-
 drop table if exists tbTpGastoMes;
 
 drop table if exists tbPlazoTpGasto;
@@ -32,6 +30,20 @@ drop table if exists tbPresupuestoMes;
 
 drop table if exists tbMes;
 
+drop table if exists tbPantallaRol;
+
+drop table if exists tbPantallas;
+
+drop table if exists tbTipoPantalla;
+
+drop table if exists tbRols;
+
+drop table if exists tbGruposTareas;
+
+drop table if exists tbGrupos;
+
+drop table if exists tbTareas;
+
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
 				fcDescObj varchar(100));
@@ -44,9 +56,9 @@ create table if not exists tbCatTpPer(fiIdTpPer serial primary key,
 				fcDescTpPer char(50), 
 				fnStatTpPer boolean default true);
 
-create table if not exists tbCatRol(fiIdRol serial primary key,
-				fiDescRol varchar(100),
-                                fnStatRol boolean default true);
+create table if not exists tbRols(fiIdRol serial primary key,
+				fiRolDesc varchar(100),
+                                fnRolStat boolean default true);
 
 create table if not exists tbMemberRol(fiIdMemberRol serial primary key,
 				fiIdRol int references tbCatRol(fiIdRol),
@@ -113,6 +125,49 @@ create table if not exists tbPresupuestoMes(fiIdPresupuestoMes serial primary ke
 create table if not exists tbGastadoMes(fiGastadoMes serial primary key,
 					fiIdMes int references tbMes(fiIdMes),
 					fmGastadoMes money);
+
+create table if not exists tbTipoPantalla(fiIdTipoPantalla serial primary key,
+					fcTipoPantallaDesc varchar(200));
+
+create table if not exists tbPantallas(fiIdPantalla serial primary key,
+				fiIdTipoPantalla int references tbTipoPantalla(fiIdTipoPantalla),
+				fcPantallaDesc varchar(1000),
+				fcPantallaURL varchar(500));	
+
+create table if not exists tbPantallaRol(fiIdPantallaRol serial primary key,
+					fiIdPantalla int references tbPantallas(fiIdPantalla),
+					fiIdRol int references tbRols(fiIdRol));
+
+create table if not exists tbGrupos(fiIdGrupo serial primary key,
+				fcGrupoDesc varchar(200));
+
+create table if not exists tbTareas(fiIdTarea serial primary key,
+				fcTareaDesc varchar(1000));
+
+create table if not exists tbGruposTareas(fiIDGrupoTarea serial primary key,
+					fiIdGrupo int references tbGrupos(fiIdGrupo),
+					fiIdTarea int references tbTareas(fiIdTarea));			
+
+insert into tbTareas(fcTareaDesc)values('Pintar puerta');
+insert into tbTareas(fcTareaDesc)values('Pintura externa');
+insert into tbTareas(fcTareaDesc)values('Pintura interna');
+insert into tbTareas(fcTareaDesc)values('Limpieza ventanas');
+insert into tbTareas(fcTareaDesc)values('Limpieza carpeta');
+
+insert into tbGrupos(fcGrupoDesc)values('Pintores');
+insert into tbGrupos(fcGrupoDesc)values('Limpieza');
+
+insert into tbGruposTareas(fiIdGrupo, fiIdTarea)values(1,1);
+insert into tbGruposTareas(fiIdGrupo, fiIdTarea)values(1,2);
+
+insert into tbTipoPantalla(fcTipoPantallaDesc)values('WEB');
+insert into tbTipoPantalla(fcTipoPantallaDesc)values('Mobil');
+
+insert into tbPantallas(fiIdTipoPantalla, fcPantallaDesc, fcPantallaURL)values(1, 'Login', '\Login');
+
+insert into tbRols(fiRolDesc)values('Admin');
+
+insert into tbPantallaRol(fiIdPantalla, fiIdRol)values(1,1);
 
 insert into tbMes(fcMes)values('Enero');
 insert into tbMes(fcMes)values('Febrero');
