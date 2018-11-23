@@ -161,12 +161,29 @@ create table if not exists tbTrabajos(fiIdTrabajo serial primary key,
 				fcTrabajoReferencia varchar(5000),
 				flTrabajoLat decimal(28,10),
 				flTrabajoLong decimal(28,10),
-				fdTrabajoFecUltCambio date default CURRENT_TIMESTAMP,
+				fdTrabajoFecUltAct date default CURRENT_TIMESTAMP,
 				fnTrabajoStat bool default true);
 
 create table if not exists tbTrabajosGruposTareas(fiIdTrabajosGruposTareas serial primary key,
 						fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
-						fiIdGrupoTarea int references tbGruposTareas(fiIdGrupoTarea));
+						fiIdGrupoTarea int references tbGruposTareas(fiIdGrupoTarea),
+						fdTrabajosGruposTareasFecUltAct date default CURRENT_TIMESTAMP,
+						fnTrabajosGruposTareasStat bool default true);
+
+create table if not exists tbStatusTrabajosGruposTareas(fiIdStatusTrabajosGruposTareas serial primary key,
+							fcStatusTrabajosGruposTareasDesc varchar(50))
+
+create table if not exists tbTrabajosGruposTareasStat(fiIdTrabajosGruposTareasStat serial primary key,
+						fiIdTrabajosGruposTareas int references tbTrabajosGruposTareas(fiIdTrabajosGruposTareas),
+						fiIdStatusTrabajosGruposTareas int references tbStatusTrabajosGruposTareas(fiIdStatusTrabajosGruposTareas),
+						fdTrabajosGruposTareasStatFecUltAct date default CURRENT_TIMESTAMP,
+						fnTrabajosGruposTareasStat bool default true);
+
+insert into tbStatusTrabajosGruposTareas(fcStatusTrabajosGruposTareasDesc)values('Nuevo');
+insert into tbStatusTrabajosGruposTareas(fcStatusTrabajosGruposTareasDesc)values('Asignado');
+insert into tbStatusTrabajosGruposTareas(fcStatusTrabajosGruposTareasDesc)values('En proceso');
+insert into tbStatusTrabajosGruposTareas(fcStatusTrabajosGruposTareasDesc)values('Terminado');
+insert into tbStatusTrabajosGruposTareas(fcStatusTrabajosGruposTareasDesc)values('Cancelado');
 
 insert into tbTrabajos(fcTrabajoDesc, 
 		fcTrabajoDireccion, 
