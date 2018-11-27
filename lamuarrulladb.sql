@@ -227,7 +227,9 @@ create table tbTrabajoTarea(fiIdTrabajoTarea serial primary key,
 -- 						fdTrabajosGruposTareasStatFecUltAct date default CURRENT_TIMESTAMP,
 -- 						fnTrabajosGruposTareasStat bool default true);
 
-insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRolUsu) values ('DAVER', 'angelnmara@hotmail.com', 1);
+insert into tbEmpresas(fcEmpresaNom)values('Neurosys');
+
+insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRolUsu, fiIdEmpresa) values ('DAVER', 'angelnmara@hotmail.com', 1, 1);
 
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Nuevo', 1);
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Asignado', 1);
@@ -269,6 +271,9 @@ insert into tbGrupos(fcGrupoNom)values('Limpieza');
 
 insert into tbGruposTareas(fiIdGrupo, fiIdTarea, figrupotareausuultcamb)values(1,1, 1);
 insert into tbGruposTareas(fiIdGrupo, fiIdTarea, figrupotareausuultcamb)values(1,2, 1);
+
+insert into tbGruposEmpresas(fiIdGrupo, fiIdEmpresa, fiGruposEmpresasUsuUltCamb)values(1,1,1);
+insert into tbGruposEmpresas(fiIdGrupo, fiIdEmpresa, fiGruposEmpresasUsuUltCamb)values(1,1,1);
 
 insert into tbTipoPantalla(fcTipoPantallaDesc)values('WEB');
 insert into tbTipoPantalla(fcTipoPantallaDesc)values('Mobil');
