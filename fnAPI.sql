@@ -26,12 +26,18 @@ begin
 	drop table if exists tbcampostemp;
 	drop table if exists tbResTemp;
 	create temp table tbCamposTemp(fiIdCampos serial, fcCampo varchar);
-	create temp table tbResTemp(fcRes varchar);
+	create temp table tbResTemp(fiIdRes serial, fcRes varchar);
 
 	SELECT column_name into prmaryKey
 	FROM information_schema.columns
 	where table_name = tabla
 	and column_default like '%nextval%';
+
+	insert into tbcampostemp(fcCampo)
+	select a from unnest(string_to_array(campos, ',')) as a;
+
+	insert into tbrestemp(fcRes)
+	select a from unnest(string_to_array(res, ',')) as a;
 
 	-- GET
 	if metodo = 1 then
@@ -48,12 +54,7 @@ begin
 		-- POST	
 		elsif metodo = 2 then
 			--strArrCampos = string_to_array(campos, ',');
-			--strArrRes = string_to_array(res, ',');
-			insert into tbcampostemp(fcCampo)
-			select a from unnest(string_to_array(campos, ',')) as a;
-
-			insert into tbrestemp
-			select a from unnest(string_to_array(res, ',')) as a;
+			--strArrRes = string_to_array(res, ',');			
 
 			select count(*) into tieneLlave
 			from tbcampostemp
@@ -92,16 +93,25 @@ begin
 			else
 				salida := 'Faltan campos requeridos para insertar';
 			end if;
-			return salida;	
+			return salida;
+		-- PUT		
+		elsif metodo = 4 then				
+			select array_agg(a.fcCampo || ' = ' || b.fcRes) into salida
+			from tbcampostemp a
+			inner join tbResTemp b
+			on a.fiIdCampos = b.fiIdRes;
+			raise notice '% ', salida;
+			return salida;
 		-- DELETE
 		elsif metodo = 4 then
 			execute('delete from ' || tabla || ' where ' || prmaryKey || ' = ' || idTabla);
 			IF NOT FOUND THEN
-			      raise notice 'akdjfkjadkjf % %', SQLERRM, SQLSTATE;
+			      raise notice '% %', SQLERRM, SQLSTATE;
 			ELSIF FOUND THEN
 				GET DIAGNOSTICS salida := ROW_COUNT;
 			      -- the above line used to get row_count
-			   raise notice '% ', salida;
+				raise notice '% %', SQLERRM, SQLSTATE;
+				raise notice '% ', salida;
 			END IF; 
 			return '{"API":"Se eliminaron ' || salida || ' registros."}';
 		else 
@@ -120,6 +130,6 @@ ALTER FUNCTION public.fnapi(int, character, character, character, int)
 
 
 select *
-from public.fnapi(1, 'tbusu', '', '',0);
+from public.fnapi(4, 'tbusu', 'fcUsuNom', 'drincon',0);
 -- select *gg
 -- from tbusu;
