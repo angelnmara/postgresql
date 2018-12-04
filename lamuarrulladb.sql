@@ -85,7 +85,7 @@ create table if not exists tbEmpresas(fiIdEmpresa serial primary key,
 				fcEmpresaStat bool default true not null);                                
 
 create table if not exists tbUsu (fiIdUsu serial primary key,
-                    fcUsuNom char(10) unique not null,
+                    fcUsuNom char(50) unique not null,
                     fiIdEmpresa int references tbEmpresas(fiIdEmpresa),
                     fcUsuCorrElec char(100) unique not null,                    
                     fiIdRolUsu int references tbCatRol(fiIdRol),

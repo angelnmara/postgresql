@@ -2,7 +2,7 @@
 
  --DROP FUNCTION public.fnapi(int, character, character, character);
 
-CREATE OR REPLACE FUNCTION public.fnapi(int, character, character, character)
+CREATE OR REPLACE FUNCTION public.fnapi(int, character, character default '', character default '', int default 0)
   RETURNS character varying AS
 $BODY$
 declare 
@@ -10,7 +10,8 @@ declare
 	tabla alias for $2;
 	campos alias for $3;
 	res alias for $4;
-	rest varchar(3000);
+	idTabla alias for $5;
+	rest varchar;
 	countCampos int;	
 	insertT character;
 	tbcampostempCount int;
@@ -21,10 +22,10 @@ declare
 	lastId int;
 	--strArrCampos text[];
 	--strArrRes text[];	
-begin	
-	drop table if exists tbCamposTemp;
+begin		
+	drop table if exists tbcampostemp;
 	drop table if exists tbResTemp;
-	create temp table tbCamposTemp(fcCampo varchar);
+	create temp table tbCamposTemp(fiIdCampos serial, fcCampo varchar);
 	create temp table tbResTemp(fcRes varchar);
 
 	SELECT column_name into prmaryKey
@@ -32,13 +33,23 @@ begin
 	where table_name = tabla
 	and column_default like '%nextval%';
 
+	-- GET
 	if metodo = 1 then
-			execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ') t);' into rest;
-			return rest;
+			-- GET Sin Id
+			if idTabla = 0 then
+				raise notice 'entra 0';
+				execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ' order by ' || prmarykey || ') t );' into rest;
+			-- GET Con Id
+			else
+				raise notice 'entra > 0';
+				execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ' where ' || prmarykey || ' = ' || idTabla || ') t);' into rest;
+			end if;
+			return '{"API":' || rest || '}';
+		-- POST	
 		elsif metodo = 2 then
 			--strArrCampos = string_to_array(campos, ',');
 			--strArrRes = string_to_array(res, ',');
-			insert into tbcampostemp
+			insert into tbcampostemp(fcCampo)
 			select a from unnest(string_to_array(campos, ',')) as a;
 
 			insert into tbrestemp
@@ -63,37 +74,52 @@ begin
 
 			select count(*) into tbrestempCount
 			from tbrestemp;
-
+			
 			if tieneLlave > 0 then
 				raise notice 'entra aquí se tiene que insertar llave';
 				salida := 'no se puede insertar una llave: ' || prmaryKey;							
 			elsif countCampos = 0 then
 				if tbcampostempCount = tbrestempCount then
 					campos = '(' || campos || ')';
-					res = '(' || res || ')';								
-					raise notice 'salida';
+					res = '(' || res || ')';													
 					execute('insert into ' || tabla || campos || 'values' || res || 'RETURNING ' || prmaryKey) into lastId;
-					salida := lastId;	
+					--raise notice ltrim ('(select array_to_json(array_agg(row_to_json(t))) from (select trim(*) from ');-- || tabla || ' where ' || prmaryKey || ' = ' || lastId || ') t);';
+					execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ' where ' || prmaryKey || ' = ' || lastId || ') t);' into rest;
+					salida := '{"API":' || rest || '}';
 				else
 					salida := 'No se tienen los mismos campos y los mismos res ' || tbcampostempCount || ' ' || tbrestempCount;
 				end if;
 			else
 				salida := 'Faltan campos requeridos para insertar';
 			end if;
-			return salida;
+			return salida;	
+		-- DELETE
+		elsif metodo = 4 then
+			execute('delete from ' || tabla || ' where ' || prmaryKey || ' = ' || idTabla);
+			IF NOT FOUND THEN
+			      raise notice 'akdjfkjadkjf % %', SQLERRM, SQLSTATE;
+			ELSIF FOUND THEN
+				GET DIAGNOSTICS salida := ROW_COUNT;
+			      -- the above line used to get row_count
+			   raise notice '% ', salida;
+			END IF; 
+			return '{"API":"Se eliminaron ' || salida || ' registros."}';
 		else 
 			return 'dos';
 	end if;	
+	exception when others then		
+		return '{"error":"' || replace(SQLERRM, '"', '') || '"}';
+		raise notice '% %', SQLERRM, SQLSTATE;
+		
 end;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public.fnapi(int, character, character, character)
+ALTER FUNCTION public.fnapi(int, character, character, character, int)
   OWNER TO postgres;
 
 
 select *
-from public.fnapi(2, 'tbusu', 'fcusunom,fiidempresa,fcusucorrelec,fiidrolusu,fnusustat', '''alfredo'',1,''alfredo el choto'',5,true');
-select *
-from tbusu;
-rollback;
+from public.fnapi(1, 'tbusu', '', '',0);
+-- select *gg
+-- from tbusu;
