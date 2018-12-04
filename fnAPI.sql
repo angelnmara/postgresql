@@ -35,10 +35,10 @@ begin
 	and column_default like '%nextval%';
 
 	insert into tbcampostemp(fcCampo)
-	select a from unnest(string_to_array(campos, ',')) as a;
+	select trim(a) from unnest(string_to_array(campos, ',')) as a;
 
 	insert into tbrestemp(fcRes)
-	select a from unnest(string_to_array(res, ',')) as a;
+	select trim(a) from unnest(string_to_array(res, ',')) as a;
 
 	-- GET
 	if metodo = 1 then
@@ -92,7 +92,7 @@ begin
 					salida := 'No se tienen los mismos campos y los mismos res ' || tbcampostempCount || ' ' || tbrestempCount;
 				end if;
 			else
-				salida := 'Faltan campos requeridos para insertar';
+				salida := '{"API":"Faltan campos requeridos para insertar"}';
 			end if;
 			return salida;
 		-- PUT		
@@ -128,5 +128,6 @@ ALTER FUNCTION public.fnapi(int, character, character, character, int)
 
 select *
 from public.fnapi(3, 'tbusu', 'fcUsuNom, fcUsuCorrElec', '''drinconABC'', ''VADa@bcd.cso''',35);
--- select *gg
--- from tbusu;
+
+select *
+from public.fnapi(2, 'tbusu', 'fcusunom, fcusucorrelec', '''dave'', ''rincon''', 35);
