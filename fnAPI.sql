@@ -20,6 +20,7 @@ declare
 	prmaryKey varchar(100);
 	tieneLlave int;
 	lastId int;
+	updateStr varchar;
 	--strArrCampos text[];
 	--strArrRes text[];	
 begin		
@@ -95,24 +96,20 @@ begin
 			end if;
 			return salida;
 		-- PUT		
-		elsif metodo = 4 then				
-			select array_agg(a.fcCampo || ' = ' || b.fcRes) into salida
+		elsif metodo = 3 then				
+			select array_to_string(array_agg(a.fcCampo || ' = ' || b.fcRes), ',') into updateStr
 			from tbcampostemp a
 			inner join tbResTemp b
 			on a.fiIdCampos = b.fiIdRes;
 			raise notice '% ', salida;
-			return salida;
+			execute ('update ' || tabla || ' set ' || updateStr || ' where ' || prmaryKey || ' = ' || idTabla);
+			GET DIAGNOSTICS salida := ROW_COUNT;
+
+			return '{"API":"Se actualizaron ' || salida || ' registros"}';
 		-- DELETE
 		elsif metodo = 4 then
 			execute('delete from ' || tabla || ' where ' || prmaryKey || ' = ' || idTabla);
-			IF NOT FOUND THEN
-			      raise notice '% %', SQLERRM, SQLSTATE;
-			ELSIF FOUND THEN
-				GET DIAGNOSTICS salida := ROW_COUNT;
-			      -- the above line used to get row_count
-				raise notice '% %', SQLERRM, SQLSTATE;
-				raise notice '% ', salida;
-			END IF; 
+			GET DIAGNOSTICS salida := ROW_COUNT;						
 			return '{"API":"Se eliminaron ' || salida || ' registros."}';
 		else 
 			return 'dos';
@@ -130,6 +127,6 @@ ALTER FUNCTION public.fnapi(int, character, character, character, int)
 
 
 select *
-from public.fnapi(4, 'tbusu', 'fcUsuNom', 'drincon',0);
+from public.fnapi(3, 'tbusu', 'fcUsuNom, fcUsuCorrElec', '''drinconABC'', ''VADa@bcd.cso''',35);
 -- select *gg
 -- from tbusu;
