@@ -202,11 +202,12 @@ create table tbTareasStatus(fiIdTareaStatus serial primary key,
 			fnTareaEstatusStat bool default true,
 			fiTareaStatusUsuUltCamb int references tbUsu(fiIdUsu) not null);
 
-create table tbTareaTrabajo(fiIdTareaTrabajo serial primary key,
+create table tbTrabajoTarea(fiIdTrabajoTarea serial primary key,
 			fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
 			fiIdTarea int references tbTareas(fiIdTarea),
 			fiIdTareasStatus int references tbTareasStatus(fiIdTareaStatus),
-			fiTareaTrabajoUsuUltCamb int references tbUsu(fiIdUsu) not null);							
+			fiTrabajoTareaUsuUltCamb int references tbUsu(fiIdUsu) not null,
+			UNIQUE(fiIdTrabajo, fiIdTarea));							
 
 insert into tbEmpresas(fcEmpresaNom)values('Neurosys');
 
@@ -249,6 +250,11 @@ insert into tbTareas(fcTareaNom)values('Pintura externa');
 insert into tbTareas(fcTareaNom)values('Pintura interna');
 insert into tbTareas(fcTareaNom)values('Limpieza ventanas');
 insert into tbTareas(fcTareaNom)values('Limpieza carpeta');
+
+insert into tbTrabajoTarea(fiIdTrabajo,
+		fiIdTarea,
+		fiIdTareasStatus,
+		fiTrabajoTareaUsuUltCamb)values(1,1,1,1);
 
 insert into tbGrupos(fcGrupoNom)values('Pintores');
 insert into tbGrupos(fcGrupoNom)values('Limpieza');

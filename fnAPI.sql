@@ -51,7 +51,7 @@ begin
 				raise notice 'entra > 0';
 				execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ' where ' || prmarykey || ' = ' || idTabla || ') t);' into rest;
 			end if;
-			return '{"API":' || rest || '}';
+			return '{"' || tabla || '":' || rest || '}';
 		-- POST	
 		elsif metodo = 2 then
 			--strArrCampos = string_to_array(campos, ',');
@@ -87,7 +87,7 @@ begin
 					execute('insert into ' || tabla || campos || 'values' || res || 'RETURNING ' || prmaryKey) into lastId;
 					--raise notice ltrim ('(select array_to_json(array_agg(row_to_json(t))) from (select trim(*) from ');-- || tabla || ' where ' || prmaryKey || ' = ' || lastId || ') t);';
 					execute '(select array_to_json(array_agg(row_to_json(t))) from (select * from ' || tabla || ' where ' || prmaryKey || ' = ' || lastId || ') t);' into rest;
-					salida := '{"API":' || rest || '}';
+					salida := '{"' || tabla || '":' || rest || '}';
 				else
 					salida := 'No se tienen los mismos campos y los mismos res ' || tbcampostempCount || ' ' || tbrestempCount;
 				end if;
@@ -105,12 +105,12 @@ begin
 			execute ('update ' || tabla || ' set ' || updateStr || ' where ' || prmaryKey || ' = ' || idTabla);
 			GET DIAGNOSTICS salida := ROW_COUNT;
 
-			return '{"API":"Se actualizaron ' || salida || ' registros"}';
+			return '{"' || tabla || '":"Se actualizaron ' || salida || ' registros"}';
 		-- DELETE
 		elsif metodo = 4 then
 			execute('delete from ' || tabla || ' where ' || prmaryKey || ' = ' || idTabla);
 			GET DIAGNOSTICS salida := ROW_COUNT;						
-			return '{"API":"Se eliminaron ' || salida || ' registros."}';
+			return '{"' || tabla || '":"Se eliminaron ' || salida || ' registros."}';
 		else 
 			return 'dos';
 	end if;	
