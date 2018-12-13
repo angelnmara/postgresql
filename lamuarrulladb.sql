@@ -50,11 +50,7 @@ drop table if exists tbPresupuestoMes;
 
 drop table if exists tbMes;
 
-drop table if exists tbRols;
-
--- drop table if exists tbTrabajosGruposTareasStat;
--- drop table if exists tbTrabajosGruposTareas;
--- drop table if exists tbStatusTrabajosGruposTareas
+drop table if exists tbCatRol;
 
 drop table if exists tbEmpresas;
 
@@ -70,8 +66,8 @@ create table if not exists tbCatTpPer(fiIdTpPer serial primary key,
 				fcDescTpPer char(50), 
 				fnStatTpPer boolean default true);
 
-create table if not exists tbRols(fiIdRol serial primary key,
-				fiRolDesc varchar(100),
+create table if not exists tbCatRol(fiIdRol serial primary key,
+				fcRolDesc varchar(100),
                                 fnRolStat boolean default true);
 
 create table if not exists tbMemberRol(fiIdMemberRol serial primary key,
@@ -88,7 +84,7 @@ create table if not exists tbUsu (fiIdUsu serial primary key,
                     fcUsuNom char(50) unique not null,
                     fiIdEmpresa int references tbEmpresas(fiIdEmpresa),
                     fcUsuCorrElec char(100) unique not null,                    
-                    fiIdRolUsu int references tbCatRol(fiIdRol),
+                    fiIdRol int references tbCatRol(fiIdRol),
                     fnUsuStat boolean default true);
 
 create table if not exists tbUsuCveApi(fiIdUsuCveAPI serial primary key,
@@ -160,7 +156,7 @@ create table if not exists tbPantallas(fiIdPantalla serial primary key,
 
 create table if not exists tbPantallaRol(fiIdPantallaRol serial primary key,
 					fiIdPantalla int references tbPantallas(fiIdPantalla),
-					fiIdRol int references tbRols(fiIdRol),
+					fiIdRol int references tbCatRol(fiIdRol),
 					fnPantallaRol bool default true,
 					fiPantallaRolUsuUltCamb int references tbUsu(fiIdUsu));
 
@@ -206,30 +202,21 @@ create table tbTareasStatus(fiIdTareaStatus serial primary key,
 			fnTareaEstatusStat bool default true,
 			fiTareaStatusUsuUltCamb int references tbUsu(fiIdUsu) not null);
 
-create table tbTrabajoTarea(fiIdTrabajoTarea serial primary key,
+create table tbTareaTrabajo(fiIdTareaTrabajo serial primary key,
 			fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
 			fiIdTarea int references tbTareas(fiIdTarea),
 			fiIdTareasStatus int references tbTareasStatus(fiIdTareaStatus),
-			fiTrabajoTareaUsuUltCamb int references tbUsu(fiIdUsu) not null);							
-
--- create table if not exists tbTrabajosGruposTareas(fiIdTrabajosGruposTareas serial primary key,
--- 						fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
--- 						fiIdGrupoTarea int references tbGruposTareas(fiIdGrupoTarea),
--- 						fdTrabajosGruposTareasFecUltAct date default CURRENT_TIMESTAMP,
--- 						fnTrabajosGruposTareasStat bool default true);
-
--- create table if not exists tbStatusTrabajosGruposTareas(fiIdStatusTrabajosGruposTareas serial primary key,
--- 							fcStatusTrabajosGruposTareasDesc varchar(50))
-
--- create table if not exists tbTrabajosGruposTareasStat(fiIdTrabajosGruposTareasStat serial primary key,
--- 						fiIdTrabajosGruposTareas int references tbTrabajosGruposTareas(fiIdTrabajosGruposTareas),
--- 						fiIdStatusTrabajosGruposTareas int references tbStatusTrabajosGruposTareas(fiIdStatusTrabajosGruposTareas),
--- 						fdTrabajosGruposTareasStatFecUltAct date default CURRENT_TIMESTAMP,
--- 						fnTrabajosGruposTareasStat bool default true);
+			fiTareaTrabajoUsuUltCamb int references tbUsu(fiIdUsu) not null);							
 
 insert into tbEmpresas(fcEmpresaNom)values('Neurosys');
 
-insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRolUsu, fiIdEmpresa) values ('DAVER', 'angelnmara@hotmail.com', 1, 1);
+insert into tbCatRol(fcRolDesc) values ('Admin');
+insert into tbCatRol(fcRolDesc) values ('Gerente');
+insert into tbCatRol(fcRolDesc) values ('Ejecutivo');
+insert into tbCatRol(fcRolDesc) values ('Vendedor');
+insert into tbCatRol(fcRolDesc) values ('Usuario');
+
+insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRol, fiIdEmpresa) values ('DAVER', 'angelnmara@hotmail.com', 1, 1);
 
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Nuevo', 1);
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Asignado', 1);
@@ -257,9 +244,6 @@ insert into tbTrabajos(
 		-21.36979,
 		1);
 
--- insert into tbTrabajosGruposTareas(fiIdTrabajo, fiIdGrupoTarea)values(1,1);
--- insert into tbTrabajosGruposTareas(fiIdTrabajo, fiIdGrupoTarea)values(1,2);
-
 insert into tbTareas(fcTareaNom)values('Pintar puerta');
 insert into tbTareas(fcTareaNom)values('Pintura externa');
 insert into tbTareas(fcTareaNom)values('Pintura interna');
@@ -280,7 +264,7 @@ insert into tbTipoPantalla(fcTipoPantallaDesc)values('Mobil');
 
 insert into tbPantallas(fiIdTipoPantalla, fcPantallaNom, fcPantallaURL)values(1, 'Login', '\Login');
 
-insert into tbRols(fiRolDesc)values('Admin');
+insert into tbCatRol(fcRolDesc)values('Admin');
 
 insert into tbPantallaRol(fiIdPantalla, fiIdRol)values(1,1);
 
@@ -364,12 +348,6 @@ insert into tbCatCampo(fcCampo, fcDescCampo) values('Cte', 'Cliente');
 insert into tbCatTpPer(fcDescTpPer) values ('Fisica');
 insert into tbCatTpPer(fcDescTpPer) values ('Moral');
 insert into tbCatTpPer(fcDescTpPer) values ('Fisica con actividad empresarial');
-
-insert into tbCatRol(fiDescRol) values ('Admin');
-insert into tbCatRol(fiDescRol) values ('Gerente');
-insert into tbCatRol(fiDescRol) values ('Ejecutivo');
-insert into tbCatRol(fiDescRol) values ('Vendedor');
-insert into tbCatRol(fiDescRol) values ('Usuario');
 
 insert into tbMemberRol(fiIdRol, fiIdRolMember) values (1,2);
 insert into tbMemberRol(fiIdRol, fiIdRolMember) values (1,3);
