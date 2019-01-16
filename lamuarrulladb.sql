@@ -54,6 +54,8 @@ drop table if exists tbCatRol;
 
 drop table if exists tbEmpresas;
 
+drop table if exists tbAsistencia;
+
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
 				fcDescObj varchar(100));
@@ -197,17 +199,29 @@ create table if not exists tbTrabajos(fiIdTrabajo serial primary key,
 				fnTrabajoStat bool default true not null,
 				fiTrabajoUsuUltCamb int references tbUsu(fiIdUsu) not null);
 
-create table tbTareasStatus(fiIdTareaStatus serial primary key,
+create table if not exists tbTareasStatus(fiIdTareaStatus serial primary key,
 			fcTareasEstatusNom varchar(100),
 			fnTareaEstatusStat bool default true,
 			fiTareaStatusUsuUltCamb int references tbUsu(fiIdUsu) not null);
 
-create table tbTrabajoTarea(fiIdTrabajoTarea serial primary key,
+create table if not exists tbTrabajoTarea(fiIdTrabajoTarea serial primary key,
 			fiIdTrabajo int references tbTrabajos(fiIdTrabajo),
 			fiIdTarea int references tbTareas(fiIdTarea),
 			fiIdTareasStatus int references tbTareasStatus(fiIdTareaStatus),
 			fiTrabajoTareaUsuUltCamb int references tbUsu(fiIdUsu) not null,
-			UNIQUE(fiIdTrabajo, fiIdTarea));							
+			UNIQUE(fiIdTrabajo, fiIdTarea));
+
+create table if not exists tbAsistencia(fiIdAsistencia serial primary key,
+			Numero varchar(10),
+			VerifMode varchar(2),
+			InOutMode varchar(2),
+			Ano varchar(4),
+			Mes varchar(2),
+			Dia varchar(2),
+			Hora varchar(2),
+			Minuto varchar(2),
+			Segundo varchar(2),
+			Codigo varchar(2));			
 
 insert into tbEmpresas(fcEmpresaNom)values('Neurosys');
 
