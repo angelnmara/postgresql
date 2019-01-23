@@ -56,6 +56,8 @@ drop table if exists tbEmpresas;
 
 drop table if exists tbAsistencia;
 
+drop table if exists tbUsuarioAsistencia;
+
 create table if not exists tbCatObj(fiIdObj serial primary key,
 				fcObj varchar(4),
 				fcDescObj varchar(100));
@@ -221,7 +223,14 @@ create table if not exists tbAsistencia(fiIdAsistencia serial primary key,
 			Hora varchar(2),
 			Minuto varchar(2),
 			Segundo varchar(2),
-			Codigo varchar(2));			
+			Codigo varchar(2));
+
+create table if not exists tbUsuarioAsistencia(fiIdUsuarioAsistencia serial primary key,
+					Numero varchar(10),
+					PNombre varchar(50),
+					SNombre varchar(50),
+					APaterno varchar(50),
+					AMaterno varchar(50));				
 
 insert into tbEmpresas(fcEmpresaNom)values('Neurosys');
 
