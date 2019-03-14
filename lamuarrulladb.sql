@@ -100,7 +100,9 @@ create table if not exists tbUsuCveApi(fiIdUsuCveAPI serial primary key,
 
 create table if not exists tbUsuPassw(fiIdUsuPassw serial primary key,
 				fiIdUsu int references tbusu(fiIdUsu),
-                                fcUsuPassw varchar(200) not null default 'cXdlcnR5',
+                                fcUsuPassw TEXT not null default '$2a$06$ytswCy0JbEXcAZFd6k6X9.1Ml6AsTn9rpUO78hYaGsN0LixdtBubm',
+                                fcSecPassw TEXT not null default '',
+                                fcSalt TEXT not null default '',
                                 fnStatUsuPassw boolean default true,
                                 fdFecIniUsuPassw timestamp default CURRENT_TIMESTAMP,
                                 fdFecFinUsuPassw timestamp null);
@@ -240,7 +242,8 @@ insert into tbCatRol(fcRolDesc) values ('Ejecutivo');
 insert into tbCatRol(fcRolDesc) values ('Vendedor');
 insert into tbCatRol(fcRolDesc) values ('Usuario');
 
-insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRol, fiIdEmpresa) values ('DAVER', 'angelnmara@hotmail.com', 1, 1);
+insert into tbUsu(fcUsuNom, fcUsuCorrElec, fiIdRol, fiIdEmpresa) 
+values ('DAVER', 'angelnmara@hotmail.com', 1, 1) returning fiIdUsu;
 
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Nuevo', 1);
 insert into tbTareasStatus(fcTareasEstatusNom, fitareastatususuultcamb)values('Asignado', 1);
