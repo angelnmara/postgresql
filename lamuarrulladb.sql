@@ -1,4 +1,6 @@
-﻿drop table if exists tbModuloEmpresa;
+CREATE EXTENSION pgcrypto;
+
+drop table if exists tbModuloEmpresa;
 
 drop table if exists tbModulo;
 
