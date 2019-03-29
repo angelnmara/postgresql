@@ -98,7 +98,13 @@ create table if not exists tbEmpresa(fiIdEmpresa serial primary key,
 
 create table if not exists tbModulo(fiIdModulo serial primary key,
 				fcModulo varchar(100) not null,
-				fcModuloDesc varchar(100) not null);
+				fcModuloDesc varchar(200) not null,
+				fcModuloImg varchar(100) not null,
+				fiModuloOrden int default 0,
+				fiModuloPadre int default null,					
+				fnModuloStat boolean default true,
+				fdModuloFechaCreacion timestamp default CURRENT_TIMESTAMP,
+				fdModuloFechaBaja timestamp default null);
 
 create table if not exists tbModuloEmpresa(fiIdEmpresaModulo serial primary key,
 					fiIdEmpresa int references tbEmpresa(fiIdEmpresa),
@@ -409,6 +415,7 @@ insert into tbCatCampo(fcCampo, fcCampoDesc) values('Obj', 'Objeto');
 insert into tbCatCampo(fcCampo, fcCampoDesc) values('No', 'Numero');
 insert into tbCatCampo(fcCampo, fcCampoDesc) values('Nom', 'Nombre');
 insert into tbCatCampo(fcCampo, fcCampoDesc) values('Cte', 'Cliente');
+insert into tbCatCampo(fcCampo, fcCampoDesc) values('Img', 'Imagen');
 
 insert into tbCatTpPer(fcTpPerDesc) values ('Fisica');
 insert into tbCatTpPer(fcTpPerDesc) values ('Moral');
@@ -421,10 +428,14 @@ insert into tbUsuCveApi(fiIdUsu, fcCveAPI) values(1,'1234');
 
 insert into tbUsuPassw(fiIdUsu) values (1);
 
-insert into tbModulo(fcModulo, fcModuloDesc) 
-values ('Credito simple', 'Pantalla para generar credito simple');
+insert into tbModulo(fcModulo, fcModuloDesc, fcModuloImg) 
+values ('Credito Simple', 'Pantalla para generar credito simple', 'ic_menu_send');
+									 
+insert into tbModulo(fcModulo, fcModuloDesc, fcModuloImg) 
+values ('Arrendamiento Puro', 'Pantalla para generar arrendamiento puro', 'ic_menu_share');
 
 insert into tbModuloEmpresa(fiIdEmpresa, fiIdModulo) values (2,1);
+insert into tbModuloEmpresa(fiIdEmpresa, fiIdModulo) values (2,2);
 
 select *
 from tbUsuPassw;
